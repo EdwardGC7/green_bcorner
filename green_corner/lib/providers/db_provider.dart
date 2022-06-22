@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../models/clientes_model.dart';
 import '../models/empleados_model.dart';
 
 class DBProvider {
@@ -196,6 +197,14 @@ class DBProvider {
   Future<int> nuevoEmpleado(EmpleadosModel nuevoEmpleado) async {
     final db = await database;
     final res = await db.insert('Empleados', nuevoEmpleado.toJson());
+    print(res);
+    return res;
+  }
+
+  // Crear clientes
+  Future<int> nuevoCliente(ClientesModel nuevoCliente) async {
+    final db = await database;
+    final res = await db.insert('Clientes', nuevoCliente.toJson());
     print(res);
     return res;
   }

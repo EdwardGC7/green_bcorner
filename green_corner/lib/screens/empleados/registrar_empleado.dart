@@ -11,7 +11,6 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController fieldimagenController = TextEditingController();
     TextEditingController fieldNombreController = TextEditingController();
     TextEditingController fieldCedulaController = TextEditingController();
     TextEditingController fieldCiudadController = TextEditingController();
