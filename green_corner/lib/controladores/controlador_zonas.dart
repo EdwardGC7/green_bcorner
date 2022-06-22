@@ -9,6 +9,6 @@ class ControladorZonas {
         descripcion: arregloDeValores['descripcion'],
         direccion: arregloDeValores['direccion'],
         telefono: arregloDeValores['telefono']);
-    DBProvider.db.nuevaZona(datosZona);
+    return DBProvider.db.nuevaZona(datosZona);
   }
 }

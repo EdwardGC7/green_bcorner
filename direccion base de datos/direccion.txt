@@ -1,0 +1,9 @@
+C:\Users\MadHatter\AppData\Local\Android\Sdk\platform-tools
+adb devices
+adb -s emulator-5554 shell
+//ce071717f8f90b2b047e
+run-as com.example.green_corner
+cd /data/user/0/com.example.green_corner/app_flutter/
+sqlite3 StandarDB.db
+
+SELECT * FROM sqlite_master WHERE type = "table";

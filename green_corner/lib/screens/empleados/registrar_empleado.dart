@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:green_corner/controladores/controlador_Empleados.dart';
 import 'package:green_corner/theme/app_theme.dart';
 import 'package:green_corner/widgets/widgets.dart';
 
@@ -10,6 +11,15 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController fieldimagenController = TextEditingController();
+    TextEditingController fieldNombreController = TextEditingController();
+    TextEditingController fieldCedulaController = TextEditingController();
+    TextEditingController fieldCiudadController = TextEditingController();
+    TextEditingController fieldDireccionController = TextEditingController();
+    TextEditingController fieldTelMovilController = TextEditingController();
+    String tipoController = '';
+    String zonaController = '';
+    TextEditingController fieldSueldoController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar Empleados'),
@@ -50,20 +60,15 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
                 height: 40.0,
               ),
               CustomInputField(
+                customController: fieldNombreController,
                 labelText: 'Nombre',
                 hintText: 'Nombre completo del empleado',
               ),
-              // SizedBox(
-              //   height: 20.0,
-              // ),
-              // CustomInputField(
-              //   labelText: 'Apodo',
-              //   hintText: 'Apodo del cliente',
-              // ),
               SizedBox(
                 height: 20.0,
               ),
               CustomInputField(
+                customController: fieldCedulaController,
                 labelText: 'ID/Cedula',
                 hintText: 'ID del empleado',
                 keyboardType: TextInputType.visiblePassword,
@@ -72,6 +77,7 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
                 height: 20.0,
               ),
               CustomInputField(
+                customController: fieldCiudadController,
                 labelText: 'Ciudad',
                 hintText: 'Ciudad del empleado',
                 keyboardType: TextInputType.visiblePassword,
@@ -80,6 +86,7 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
                 height: 20.0,
               ),
               CustomInputField(
+                customController: fieldDireccionController,
                 labelText: 'Direccion',
                 hintText: 'Direccion del empleado',
               ),
@@ -94,6 +101,7 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
               //   height: 20.0,
               // ),
               CustomInputField(
+                customController: fieldTelMovilController,
                 labelText: 'Telefono movil',
                 hintText: 'Numero de telefono movil',
                 keyboardType: TextInputType.phone,
@@ -101,38 +109,7 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
               SizedBox(
                 height: 20.0,
               ),
-              CustomInputField(
-                labelText: 'Telefono residencial',
-                hintText: 'Telefono de la residencia',
-                keyboardType: TextInputType.phone,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              // CustomInputField(
-              //   labelText: 'Telefono del trabajo',
-              //   hintText: 'Telefono del lugar de trabajo',
-              //   keyboardType: TextInputType.phone,
-              // ),
-              // SizedBox(
-              //   height: 20.0,
-              // ),
-              CustomInputField(
-                labelText: 'Ocupacion',
-                hintText: 'A que se dedica el cliente',
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              CustomInputField(
-                labelText: 'Negocio',
-                hintText: 'Negocio del cliente',
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              DropdownButtonFormField(
+              DropdownButtonFormField<String>(
                 hint: Text('Tipo'),
                 items: [
                   DropdownMenuItem(value: 'cobrador', child: Text('Cobrador')),
@@ -141,12 +118,14 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
                   DropdownMenuItem(
                       value: 'administrador', child: Text('Administrador')),
                 ],
-                onChanged: (value) {},
+                onChanged: (value) {
+                  tipoController = value ?? 'Cobrador';
+                },
               ),
               SizedBox(
                 height: 20.0,
               ),
-              DropdownButtonFormField(
+              DropdownButtonFormField<String>(
                 hint: Text('Zona'),
                 items: [
                   DropdownMenuItem(value: 'Zonaa', child: Text('zona1')),
@@ -155,7 +134,9 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
                   DropdownMenuItem(value: 'Zonad', child: Text('zona4')),
                   DropdownMenuItem(value: 'Zonae', child: Text('zona5')),
                 ],
-                onChanged: (value) {},
+                onChanged: (value) {
+                  zonaController = value ?? 'Zona';
+                },
               ),
               /*CustomInputField(
                 labelText: 'Zona',
@@ -165,6 +146,7 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
                 height: 20.0,
               ),
               CustomInputField(
+                customController: fieldSueldoController,
                 labelText: 'Sueldo',
                 hintText: 'RD\$0.00',
               ),
@@ -187,9 +169,40 @@ class RegistrarEmpleadoScreen extends StatelessWidget {
               ),
               ElevatedButton(
                   onPressed: () {
-                    Platform.isAndroid
-                        ? AlertsWidget.displayDialogAndroid(context)
-                        : AlertsWidget.displayDialogIOS(context);
+                    Map valores = {
+                      'imagen': 'http/algodeejemplo.url',
+                      'nombre': fieldNombreController.text,
+                      'cedula': fieldCedulaController.text,
+                      'ciudad': fieldCiudadController.text,
+                      'direccion': fieldDireccionController.text,
+                      'telefono_movil': fieldTelMovilController.text,
+                      'tipo': tipoController,
+                      'zona': zonaController,
+                      'sueldo': fieldSueldoController.text
+                    };
+
+                    var resultado =
+                        ControladorEmpleados.crearEmpleados(valores);
+                    if (resultado != null) {
+                      Platform.isAndroid
+                          ? AlertsWidget.displayDialogAndroid(context)
+                          : AlertsWidget.displayDialogIOS(context);
+
+                      fieldNombreController.clear();
+                      fieldCedulaController.clear();
+                      fieldCiudadController.clear();
+                      fieldDireccionController.clear();
+                      fieldTelMovilController.clear();
+                      tipoController = '';
+                      zonaController = '';
+                      fieldSueldoController.clear();
+                    } else {
+                      Platform.isAndroid
+                          ? AlertsWidget.displayDialogAndroid(context,
+                              'Ha ocurrido un error al guardar los datos')
+                          : AlertsWidget.displayDialogIOS(context,
+                              'Ha ocurrido un error al guardar los datos');
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     primary: AppTheme.primary,

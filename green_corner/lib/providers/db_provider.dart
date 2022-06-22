@@ -5,30 +5,15 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../models/empleados_model.dart';
+
 class DBProvider {
   static Database? _database;
   static final DBProvider db = DBProvider._();
-  DBProvider._();
+  //////// SENTENCIA CREAR BASE DE DATOS //////////////////
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-
-    _database = await initDB();
-
-    return _database!;
-  }
-
-  //Future<Database> initDB() async {}
-  Future<Database> initDB() async {
-    // Path de donde almacenaremos la base de datos
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, 'StandarDB.db');
-    print(path);
-
-    //Crear base de datos
-    return await openDatabase(path, version: 2, onOpen: (db) {},
-        onCreate: (Database db, int version) async {
-      await db.execute('''
+  static var sqlCollection = [
+    """
         CREATE TABLE Zonas(
           id INTEGER PRIMARY KEY NOT NULL,
           codigo TEXT NOT NULL,
@@ -36,21 +21,26 @@ class DBProvider {
           direccion TEXT,
           telefono TEXT,
           estatus INTEGER
-        );
-
+        )
+      """,
+    """
         CREATE TABLE Empleados(
           id INTEGER PRIMARY KEY NOT NULL,
           codigo TEXT NOT NULL,
           nombre TEXT,
           cedula TEXT,
+          ciudad TEXT,
           direccion TEXT,
           telefono TEXT,
+          imagen TEXT,
           tipo TEXT,
           zona TEXT,
+          sueldo TEXT,
           usuario TEXT,
           estatus INTEGER
-        );
-
+        )
+      """,
+    """
         CREATE TABLE Clientes(
           id INTEGER PRIMARY KEY NOT NULL,
           codigo TEXT NOT NULL,
@@ -73,15 +63,17 @@ class DBProvider {
           imagen TEXT,
           balance REAL,
           estatus INTEGER
-        );
-
+        )
+      """,
+    """
         CREATE TABLE Tipos_prestamos(
           id INTEGER PRIMARY KEY NOT NULL,
           descripcion TEXT,
           dias INTEGER,
           estatus INTEGER
-        );
-
+        )
+      """,
+    """
         CREATE TABLE Usuarios(
           id INTEGER PRIMARY KEY NOT NULL,
           id_usuario TEXT NOT NULL,
@@ -89,15 +81,17 @@ class DBProvider {
           pwd TEXT,
           tipo_usuario TEXT,
           estatus INTEGER
-        );
-
+        )
+      """,
+    """
         CREATE TABLE Tipos_users(
           id INTEGER PRIMARY KEY NOT NULL,
           codigo TEXT NOT NULL,
           descripcion TEXT,
           estatus INTEGER
-        );
-
+        )
+      """,
+    """
         CREATE TABLE Config(
           id INTEGER PRIMARY KEY NOT NULL,
           codigo TEXT NOT NULL,
@@ -107,8 +101,9 @@ class DBProvider {
           porciento_acta REAL,
           porciento_mora REAL,
           estatus INTEGER
-        );
-
+        )
+      """,
+    """
         CREATE TABLE Prestamos(
           id INTEGER PRIMARY KEY NOT NULL,
           codigo TEXT NOT NULL,
@@ -126,8 +121,9 @@ class DBProvider {
           pagos REAL,
           cobrador TEXT,
           estatus INTEGER
-        );
-
+        )
+      """,
+    """
         CREATE TABLE Cuotas(
           id INTEGER PRIMARY KEY NOT NULL,
           prestamo TEXT,
@@ -139,8 +135,9 @@ class DBProvider {
           mora REAL,
           pagos REAL
 
-        );
-
+        )
+      """,
+    """
         CREATE TABLE Pagos(
           id INTEGER PRIMARY KEY NOT NULL,
           codigo TEXT NOT NULL,
@@ -153,16 +150,52 @@ class DBProvider {
           pago REAL,
           total REAL,
           estatus INTEGER
-        );
-      ''');
+        )
+      """
+  ];
+
+  DBProvider._();
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+
+    _database = await initDB();
+
+    return _database!;
+  }
+
+  //Future<Database> initDB() async {}
+  Future<Database> initDB() async {
+    // Path de donde almacenaremos la base de datos
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    final path = join(documentsDirectory.path, 'StandarDB.db');
+    print(path);
+
+    //Crear base de datos
+    return await openDatabase(path, version: 2, onOpen: (db) {},
+        onCreate: (Database db, int version) async {
+      for (String sql in sqlCollection) {
+        //paramDB.execute(sql);
+        await db.execute(sql);
+      }
+      ;
     });
   }
 
   ////////////////// CREATE /////////////////
 
+// Crear zonas
   Future<int> nuevaZona(ZonaModel nuevaZona) async {
     final db = await database;
     final res = await db.insert('Zonas', nuevaZona.toJson());
+    print(res);
+    return res;
+  }
+
+// Crear empleados
+  Future<int> nuevoEmpleado(EmpleadosModel nuevoEmpleado) async {
+    final db = await database;
+    final res = await db.insert('Empleados', nuevoEmpleado.toJson());
     print(res);
     return res;
   }

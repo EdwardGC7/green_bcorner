@@ -23,84 +23,111 @@ class RegistrarZonaScreen extends StatelessWidget {
         elevation: 0,
         //backgroundColor: Colors.transparent,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 40.0,
-              ),
-              CustomInputField(
-                customController: fieldCodigoController,
-                labelText: 'codigo',
-                hintText: '0000',
-                enable: false,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              CustomInputField(
-                customController: fieldDescripcionController,
-                labelText: 'Descripción',
-                hintText: 'Nombre de la zona',
-                keyboardType: TextInputType.visiblePassword,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              CustomInputField(
-                customController: fieldDireccionController,
-                labelText: 'Dirección',
-                hintText: 'Dirección de la zona',
-                keyboardType: TextInputType.visiblePassword,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              CustomInputField(
-                customController: fieldTelefonoController,
-                labelText: 'Teléfono',
-                hintText: 'Teléfono de contacto de la zona',
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              SizedBox(
-                height: 30.0,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    Map valores = {
-                      'codigo': fieldCodigoController.text,
-                      'descripcion': fieldDescripcionController.text,
-                      'direccion': fieldDireccionController.text,
-                      'telefono': fieldTelefonoController.text
-                    };
-                    ControladorZonas.crearZona(valores);
+      body: GestureDetector(
+        onTap: () {
+          final FocusScopeNode focus = FocusScope.of(context);
+          if (!focus.hasPrimaryFocus && focus.hasFocus) {
+            FocusScope.of(context).requestFocus(FocusNode());
+          }
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 40.0,
+                ),
+                CustomInputField(
+                  customController: fieldCodigoController,
+                  labelText: 'codigo',
+                  hintText: '0000',
+                  enable: false,
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                CustomInputField(
+                  customController: fieldDescripcionController,
+                  labelText: 'Descripción',
+                  hintText: 'Nombre de la zona',
+                  keyboardType: TextInputType.visiblePassword,
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                CustomInputField(
+                  customController: fieldDireccionController,
+                  labelText: 'Dirección',
+                  hintText: 'Dirección de la zona',
+                  keyboardType: TextInputType.visiblePassword,
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                CustomInputField(
+                  customController: fieldTelefonoController,
+                  labelText: 'Teléfono',
+                  hintText: 'Teléfono de contacto de la zona',
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                SizedBox(
+                  height: 30.0,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      Map valores = {
+                        'codigo': fieldCodigoController.text,
+                        'descripcion': fieldDescripcionController.text,
+                        'direccion': fieldDireccionController.text,
+                        'telefono': fieldTelefonoController.text
+                      };
 
-                    Platform.isAndroid
-                        ? AlertsWidget.displayDialogAndroid(context)
-                        : AlertsWidget.displayDialogIOS(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: AppTheme.primary,
-                    minimumSize: Size(double.infinity, 50.0),
-                  ),
-                  child: SizedBox(
-                      width: double.infinity,
-                      child: Center(
-                          child: Text(
-                        'Guardar zona',
-                        style: TextStyle(fontSize: 24),
-                      ))))
-            ], //column child
+                      var resultado = ControladorZonas.crearZona(valores);
+                      if (resultado != null) {
+                        Platform.isAndroid
+                            ? AlertsWidget.displayDialogAndroid(context)
+                            : AlertsWidget.displayDialogIOS(context);
+
+                        fieldDescripcionController.clear();
+                        fieldDireccionController.clear();
+                        fieldTelefonoController..clear();
+                      } else {
+                        Platform.isAndroid
+                            ? AlertsWidget.displayDialogAndroid(context,
+                                'Ha ocurrido un error al guardar los datos')
+                            : AlertsWidget.displayDialogIOS(context,
+                                'Ha ocurrido un error al guardar los datos');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: AppTheme.primary,
+                      minimumSize: Size(double.infinity, 50.0),
+                    ),
+                    child: SizedBox(
+                        width: double.infinity,
+                        child: Center(
+                            child: Text(
+                          'Guardar zona',
+                          style: TextStyle(fontSize: 24),
+                        ))))
+              ], //column child
+            ),
           ),
         ),
       ),
     );
   }
+
+  // void limpiarCampos(context) {
+  //     //fieldCodigoController.text('');
+  //     fieldDescripcionController.clear();
+  //     fieldDireccionController.clear();
+  //     fieldTelefonoController..clear();
+  //   }
 }
